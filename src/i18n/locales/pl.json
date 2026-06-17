@@ -1,0 +1,66 @@
+{
+  "app": { "title": "Kalkulator Hipoteczny" },
+  "form": {
+    "title": "Parametry kredytu",
+    "principal": "Kwota kapitału (PLN)",
+    "annualRate": "Oprocentowanie roczne (%)",
+    "termMonths": "Okres kredytowania (miesiące)",
+    "startDate": "Data uruchomienia kredytu",
+    "overpayment": "Stała nadpłata miesięczna (PLN)",
+    "insurances": "Ubezpieczenia",
+    "addInsurance": "Dodaj ubezpieczenie",
+    "saveScenario": "Zapisz scenariusz",
+    "loadScenarios": "Wczytaj scenariusz",
+    "exportCsv": "Eksportuj CSV",
+    "importCsv": "Importuj CSV",
+    "calculate": "Oblicz",
+    "monthlyInstallment": "Miesięczna rata",
+    "loanEndDate": "Data zakończenia kredytu",
+    "rrso": "RRSO",
+    "rrsoInterestPart": "oprocentowanie kredytu",
+    "rrsoInsurancePart": "koszty ubezpieczeń",
+    "rrsoNote": "Obliczana metodą IRR na miesięcznych ratach bez nadpłat."
+  },
+  "insurance": {
+    "name": "Nazwa ubezpieczenia",
+    "amount": "Kwota (PLN/mies.)",
+    "temporary": "Ubezpieczenie czasowe",
+    "endDate": "Data zakończenia",
+    "remove": "Usuń"
+  },
+  "schedule": {
+    "title": "Harmonogram spłat",
+    "full": "Pełny",
+    "condensed": "Skrócony",
+    "month": "Miesiąc",
+    "date": "Data",
+    "remainingPrincipal": "Pozostały kapitał",
+    "totalPayment": "Całkowita rata",
+    "principalPart": "Część kapitałowa",
+    "interestPart": "Część odsetkowa",
+    "noData": "Uzupełnij parametry, aby zobaczyć harmonogram.",
+    "overpayment": "Nadpłata",
+    "insuranceLastRow": "Ostatnia rata z ubezpieczeniem",
+    "insuranceFirstRow": "Pierwsza rata bez ubezpieczenia"
+  },
+  "scenarios": {
+    "title": "Scenariusze",
+    "dialogTitle": "Zapisz scenariusz",
+    "nameLabel": "Nazwa scenariusza",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "load": "Wczytaj",
+    "delete": "Usuń",
+    "empty": "Brak zapisanych scenariuszy",
+    "savedAt": "Zapisano"
+  },
+  "snackbar": {
+    "scenarioSaved": "Scenariusz zapisany",
+    "scenarioLoaded": "Scenariusz wczytany",
+    "scenarioDeleted": "Scenariusz usunięty",
+    "exportSuccess": "Eksport zakończony pomyślnie",
+    "importSuccess": "Import zakończony pomyślnie",
+    "importError": "Błąd podczas importu pliku CSV"
+  },
+  "theme": { "light": "Jasny motyw", "dark": "Ciemny motyw" }
+}

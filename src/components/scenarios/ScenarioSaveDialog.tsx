@@ -1,0 +1,74 @@
+import React, { useState } from 'react'
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import { useMortgage } from '../../context/MortgageContext'
+import { saveScenario } from '../../services/storageService'
+import type { Scenario } from '../../types'
+
+interface Props {
+  open: boolean
+  onClose: () => void
+  onSaved: (message: string) => void
+}
+
+export const ScenarioSaveDialog: React.FC<Props> = ({ open, onClose, onSaved }) => {
+  const { t } = useTranslation()
+  const { state } = useMortgage()
+  const [name, setName] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const handleSave = async () => {
+    if (!name.trim()) return
+    setSaving(true)
+    const scenario: Scenario = {
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      savedAt: new Date().toISOString(),
+      params: state.params,
+      insurances: state.insurances,
+    }
+    await saveScenario(scenario)
+    setSaving(false)
+    setName('')
+    onClose()
+    onSaved(t('snackbar.scenarioSaved'))
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>{t('scenarios.dialogTitle')}</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          label={t('scenarios.nameLabel')}
+          value={name}
+          onChange={e => setName(e.target.value)}
+          fullWidth
+          margin="dense"
+          onKeyDown={e => {
+            if (e.key === 'Enter') handleSave()
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>{t('scenarios.cancel')}</Button>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disabled={!name.trim() || saving}
+          startIcon={saving ? <CircularProgress size={16} /> : undefined}
+        >
+          {t('scenarios.save')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}

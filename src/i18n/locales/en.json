@@ -1,0 +1,66 @@
+{
+  "app": { "title": "Mortgage Calculator" },
+  "form": {
+    "title": "Loan Parameters",
+    "principal": "Principal Amount (PLN)",
+    "annualRate": "Annual Interest Rate (%)",
+    "termMonths": "Loan Term (months)",
+    "startDate": "Loan Start Date",
+    "overpayment": "Fixed Monthly Overpayment (PLN)",
+    "insurances": "Insurances",
+    "addInsurance": "Add Insurance",
+    "saveScenario": "Save Scenario",
+    "loadScenarios": "Load Scenario",
+    "exportCsv": "Export CSV",
+    "importCsv": "Import CSV",
+    "calculate": "Calculate",
+    "monthlyInstallment": "Monthly installment",
+    "loanEndDate": "Loan end date",
+    "rrso": "APR",
+    "rrsoInterestPart": "loan interest",
+    "rrsoInsurancePart": "insurance costs",
+    "rrsoNote": "Calculated using IRR on monthly payments without overpayments."
+  },
+  "insurance": {
+    "name": "Insurance Name",
+    "amount": "Amount (PLN/mo.)",
+    "temporary": "Temporary Insurance",
+    "endDate": "End Date",
+    "remove": "Remove"
+  },
+  "schedule": {
+    "title": "Payment Schedule",
+    "full": "Full",
+    "condensed": "Condensed",
+    "month": "Month",
+    "date": "Date",
+    "remainingPrincipal": "Remaining Principal",
+    "totalPayment": "Total Payment",
+    "principalPart": "Principal Part",
+    "interestPart": "Interest Part",
+    "noData": "Fill in parameters to see the schedule.",
+    "overpayment": "Overpayment",
+    "insuranceLastRow": "Last payment with insurance",
+    "insuranceFirstRow": "First payment without insurance"
+  },
+  "scenarios": {
+    "title": "Scenarios",
+    "dialogTitle": "Save Scenario",
+    "nameLabel": "Scenario Name",
+    "save": "Save",
+    "cancel": "Cancel",
+    "load": "Load",
+    "delete": "Delete",
+    "empty": "No saved scenarios",
+    "savedAt": "Saved"
+  },
+  "snackbar": {
+    "scenarioSaved": "Scenario saved",
+    "scenarioLoaded": "Scenario loaded",
+    "scenarioDeleted": "Scenario deleted",
+    "exportSuccess": "Export completed successfully",
+    "importSuccess": "Import completed successfully",
+    "importError": "Error importing CSV file"
+  },
+  "theme": { "light": "Light theme", "dark": "Dark theme" }
+}
