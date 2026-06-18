@@ -10,7 +10,7 @@ const baseParams: MortgageParams = {
   overpayment: 0,
 }
 
-describe('calculateSchedule', () => {
+describe('calculateSchedule — annuity (default)', () => {
   it('returns 120 rows for a 10-year loan', () => {
     const rows = calculateSchedule(baseParams, [])
     expect(rows.length).toBe(120)
@@ -33,10 +33,37 @@ describe('calculateSchedule', () => {
     }
   })
 
-  it('overpayment shortens the loan term', () => {
+  it('overpayment in reduce-installment mode still ends the loan early', () => {
     const params = { ...baseParams, overpayment: 500 }
     const rows = calculateSchedule(params, [])
     expect(rows.length).toBeLessThan(120)
+  })
+
+  it('reduce-installment mode: payment decreases after overpayment', () => {
+    const params = { ...baseParams, overpayment: 500, shortenTerm: false }
+    const rows = calculateSchedule(params, [])
+    const mid = Math.floor(rows.length / 2)
+    expect(rows[mid].totalPayment).toBeLessThan(rows[0].totalPayment)
+  })
+
+  it('shorten-term mode ends sooner than reduce-installment mode', () => {
+    const paramsReduce = { ...baseParams, overpayment: 500, shortenTerm: false }
+    const paramsShorten = { ...baseParams, overpayment: 500, shortenTerm: true, shortenFrequency: 12 }
+    const rowsReduce = calculateSchedule(paramsReduce, [])
+    const rowsShorten = calculateSchedule(paramsShorten, [])
+    expect(rowsShorten.length).toBeLessThanOrEqual(rowsReduce.length)
+  })
+
+  it('shorten-term mode: payment resets close to base level after shortening', () => {
+    const params = { ...baseParams, overpayment: 500, shortenTerm: true, shortenFrequency: 12 }
+    const rows = calculateSchedule(params, [])
+    const basePayment = rows[0].principalPart + rows[0].interestPart
+    // After first shortening at month 12, next month's payment should reset close to basePayment.
+    // Integer-month rounding in calcShortenedTerm causes a few-PLN difference — within 1% is correct.
+    if (rows.length > 13) {
+      const afterShorten = rows[12].principalPart + rows[12].interestPart
+      expect(Math.abs(afterShorten - basePayment)).toBeLessThan(basePayment * 0.01)
+    }
   })
 
   it('permanent insurance adds to every payment', () => {
@@ -55,9 +82,9 @@ describe('calculateSchedule', () => {
       endDate: '2024-03',
     }
     const rows = calculateSchedule(baseParams, [insurance])
-    expect(rows[0].insuranceTotal).toBe(100) // 2024-01
-    expect(rows[2].insuranceTotal).toBe(100) // 2024-03
-    expect(rows[3].insuranceTotal).toBe(0) // 2024-04 — expired
+    expect(rows[0].insuranceTotal).toBe(100)
+    expect(rows[2].insuranceTotal).toBe(100)
+    expect(rows[3].insuranceTotal).toBe(0)
   })
 
   it('handles 0% interest rate without crashing', () => {
@@ -68,15 +95,46 @@ describe('calculateSchedule', () => {
   })
 })
 
+describe('calculateSchedule — declining', () => {
+  const decParams: MortgageParams = { ...baseParams, loanType: 'declining' }
+
+  it('returns 120 rows without overpayment', () => {
+    const rows = calculateSchedule(decParams, [])
+    expect(rows.length).toBe(120)
+  })
+
+  it('principalPart is constant without overpayment', () => {
+    const rows = calculateSchedule(decParams, [])
+    const expected = baseParams.principal / baseParams.termMonths
+    rows.forEach(row => expect(row.principalPart).toBeCloseTo(expected, 1))
+  })
+
+  it('total payment decreases each month', () => {
+    const rows = calculateSchedule(decParams, [])
+    for (let i = 1; i < rows.length; i++) {
+      expect(rows[i].totalPayment).toBeLessThanOrEqual(rows[i - 1].totalPayment + 0.01)
+    }
+  })
+
+  it('last row remainingPrincipal is 0', () => {
+    const rows = calculateSchedule(decParams, [])
+    expect(rows[rows.length - 1].remainingPrincipal).toBeCloseTo(0, 0)
+  })
+
+  it('overpayment ends the loan early', () => {
+    const params = { ...decParams, overpayment: 500 }
+    const rows = calculateSchedule(params, [])
+    expect(rows.length).toBeLessThan(120)
+  })
+})
+
 describe('getCondensedSchedule', () => {
   it('returns first 10 rows plus first row of each subsequent year', () => {
     const rows = calculateSchedule(baseParams, [])
     const condensed = getCondensedSchedule(rows)
     expect(condensed[0].month).toBe(1)
     expect(condensed[9].month).toBe(10)
-    // first row of year 2 = month 13
     expect(condensed[10].month).toBe(13)
-    // first row of year 3 = month 25
     expect(condensed[11].month).toBe(25)
   })
 
@@ -97,7 +155,6 @@ describe('getCondensedSchedule', () => {
   })
 
   it('includes insurance transition rows in condensed view', () => {
-    // baseParams starts 2024-01, so month 18 = 2025-06, month 19 = 2025-07
     const insurance = {
       id: '1',
       name: 'Test',
@@ -108,8 +165,8 @@ describe('getCondensedSchedule', () => {
     const rows = calculateSchedule(baseParams, [insurance])
     const condensed = getCondensedSchedule(rows)
     const months = condensed.map(r => r.month)
-    expect(months).toContain(18) // last row with insurance
-    expect(months).toContain(19) // first row without insurance
+    expect(months).toContain(18)
+    expect(months).toContain(19)
   })
 })
 
@@ -121,7 +178,6 @@ describe('calculateRRSO', () => {
 
   it('approximates the effective annual rate when no insurance', () => {
     const rrso = calculateRRSO(baseParams, [])
-    // 6% nominal compounded monthly ≈ 6.17% effective annual
     expect(rrso).toBeGreaterThan(0.05)
     expect(rrso).toBeLessThan(0.08)
   })

@@ -42,7 +42,13 @@ export const ScenarioList: React.FC<Props> = ({ open, onClose, onLoaded, onDelet
   const handleLoad = (scenario: Scenario) => {
     dispatch({
       type: 'LOAD_SCENARIO',
-      payload: { params: scenario.params, insurances: scenario.insurances },
+      payload: {
+        params: scenario.params,
+        insurances: scenario.insurances,
+        irregularOverpayments: scenario.irregularOverpayments ?? [],
+        id: scenario.id,
+        name: scenario.name,
+      },
     })
     onClose()
     onLoaded(t('snackbar.scenarioLoaded'))

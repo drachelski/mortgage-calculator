@@ -6,7 +6,20 @@
     "annualRate": "Annual Interest Rate (%)",
     "termMonths": "Loan Term (months)",
     "startDate": "Loan Start Date",
+    "loanType": "Installment type",
+    "loanTypeAnnuity": "Fixed (annuity)",
+    "loanTypeDeclining": "Declining",
     "overpayment": "Fixed Monthly Overpayment (PLN)",
+    "shortenTerm": "Shorten term to match original installment",
+    "shortenFrequency": "Shortening frequency",
+    "shortenFrequencyMonthly": "Monthly",
+    "shortenFrequencyQuarterly": "Quarterly (3 mo.)",
+    "shortenFrequencySemiannual": "Semi-annually (6 mo.)",
+    "shortenFrequencyAnnual": "Annually (12 mo.)",
+    "shortenFrequencyCustom": "Every N months...",
+    "shortenFrequencyCustomLabel": "Number of months",
+    "irregularOverpayments": "Irregular Overpayments",
+    "addIrregularOverpayment": "Add Irregular Overpayment",
     "insurances": "Insurances",
     "addInsurance": "Add Insurance",
     "saveScenario": "Save Scenario",
@@ -19,13 +32,26 @@
     "rrso": "APR",
     "rrsoInterestPart": "loan interest",
     "rrsoInsurancePart": "insurance costs",
-    "rrsoNote": "Calculated using IRR on monthly payments without overpayments."
+    "rrsoNote": "Calculated using IRR on monthly payments without overpayments.",
+    "totalRepayment": "Total repayment amount",
+    "totalRepaymentBase": "Total without overpayments",
+    "savings": "Savings from overpayments"
   },
   "insurance": {
     "name": "Insurance Name",
     "amount": "Amount (PLN/mo.)",
     "temporary": "Temporary Insurance",
     "endDate": "End Date",
+    "remove": "Remove"
+  },
+  "irregularOverpayment": {
+    "amount": "Amount (PLN)",
+    "type": "Frequency",
+    "typeOnce": "One-time",
+    "typeSemiAnnual": "Semi-annual",
+    "typeAnnual": "Annual",
+    "date": "Payment date",
+    "startDate": "First from",
     "remove": "Remove"
   },
   "schedule": {
@@ -52,7 +78,10 @@
     "load": "Load",
     "delete": "Delete",
     "empty": "No saved scenarios",
-    "savedAt": "Saved"
+    "savedAt": "Saved",
+    "overwrite": "Overwrite",
+    "saveAsNew": "Save as new",
+    "currentScenario": "Scenario"
   },
   "snackbar": {
     "scenarioSaved": "Scenario saved",

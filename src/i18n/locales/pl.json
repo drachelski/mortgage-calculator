@@ -6,7 +6,20 @@
     "annualRate": "Oprocentowanie roczne (%)",
     "termMonths": "Okres kredytowania (miesiące)",
     "startDate": "Data uruchomienia kredytu",
+    "loanType": "Rodzaj rat",
+    "loanTypeAnnuity": "Stałe (annuitetowe)",
+    "loanTypeDeclining": "Malejące",
     "overpayment": "Stała nadpłata miesięczna (PLN)",
+    "shortenTerm": "Skróć czas, aby wyrównać ratę",
+    "shortenFrequency": "Częstotliwość skracania",
+    "shortenFrequencyMonthly": "Co miesiąc",
+    "shortenFrequencyQuarterly": "Co kwartał (3 mies.)",
+    "shortenFrequencySemiannual": "Co pół roku (6 mies.)",
+    "shortenFrequencyAnnual": "Raz do roku (12 mies.)",
+    "shortenFrequencyCustom": "Co N miesięcy...",
+    "shortenFrequencyCustomLabel": "Liczba miesięcy",
+    "irregularOverpayments": "Nieregularne nadpłaty",
+    "addIrregularOverpayment": "Dodaj nieregularną nadpłatę",
     "insurances": "Ubezpieczenia",
     "addInsurance": "Dodaj ubezpieczenie",
     "saveScenario": "Zapisz scenariusz",
@@ -19,13 +32,26 @@
     "rrso": "RRSO",
     "rrsoInterestPart": "oprocentowanie kredytu",
     "rrsoInsurancePart": "koszty ubezpieczeń",
-    "rrsoNote": "Obliczana metodą IRR na miesięcznych ratach bez nadpłat."
+    "rrsoNote": "Obliczana metodą IRR na miesięcznych ratach bez nadpłat.",
+    "totalRepayment": "Łączna kwota do spłaty",
+    "totalRepaymentBase": "Łączna kwota bez nadpłat",
+    "savings": "Oszczędności dzięki nadpłatom"
   },
   "insurance": {
     "name": "Nazwa ubezpieczenia",
     "amount": "Kwota (PLN/mies.)",
     "temporary": "Ubezpieczenie czasowe",
     "endDate": "Data zakończenia",
+    "remove": "Usuń"
+  },
+  "irregularOverpayment": {
+    "amount": "Kwota (PLN)",
+    "type": "Częstotliwość",
+    "typeOnce": "Jednorazowa",
+    "typeSemiAnnual": "Co pół roku",
+    "typeAnnual": "Raz do roku",
+    "date": "Data nadpłaty",
+    "startDate": "Pierwsza od",
     "remove": "Usuń"
   },
   "schedule": {
@@ -52,7 +78,10 @@
     "load": "Wczytaj",
     "delete": "Usuń",
     "empty": "Brak zapisanych scenariuszy",
-    "savedAt": "Zapisano"
+    "savedAt": "Zapisano",
+    "overwrite": "Nadpisz",
+    "saveAsNew": "Zapisz jako nowy",
+    "currentScenario": "Scenariusz"
   },
   "snackbar": {
     "scenarioSaved": "Scenariusz zapisany",
