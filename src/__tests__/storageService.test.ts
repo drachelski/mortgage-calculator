@@ -16,6 +16,7 @@ const makeScenario = (id: string, name: string): Scenario => ({
     overpayment: 0,
   },
   insurances: [],
+  irregularOverpayments: [],
 })
 
 beforeEach(() => {

@@ -112,7 +112,7 @@ export const MortgageForm: React.FC = () => {
     setIrregularOverpayments(irregularOverpayments.filter((_, i) => i !== index))
 
   const handleExport = () => {
-    exportCsv({ params, insurances, schedule })
+    exportCsv({ params, insurances, irregularOverpayments, schedule })
     showSnackbar(t('snackbar.exportSuccess'), 'success')
   }
 

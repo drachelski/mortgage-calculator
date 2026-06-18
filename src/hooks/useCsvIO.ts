@@ -1,16 +1,18 @@
 import { useCallback } from 'react'
 import Papa from 'papaparse'
-import type { Insurance, MortgageParams, ScheduleRow } from '../types'
+import type { Insurance, IrregularOverpayment, MortgageParams, ScheduleRow } from '../types'
 
 interface ExportData {
   params: MortgageParams
   insurances: Insurance[]
+  irregularOverpayments: IrregularOverpayment[]
   schedule: ScheduleRow[]
 }
 
 interface ImportResult {
   params: MortgageParams
   insurances: Insurance[]
+  irregularOverpayments: IrregularOverpayment[]
 }
 
 const splitSections = (content: string): Record<string, string> => {
@@ -56,30 +58,65 @@ export const parseCsvContent = (content: string): ImportResult => {
       endDate: row.endDate ? String(row.endDate) : undefined,
     }))
 
-  return { params, insurances }
+  const irregularsRaw = sections['IRREGULAR_OVERPAYMENTS']
+    ? Papa.parse<Record<string, string>>(sections['IRREGULAR_OVERPAYMENTS'], {
+        header: true,
+        dynamicTyping: true,
+      }).data
+    : []
+
+  const irregularOverpayments: IrregularOverpayment[] = irregularsRaw
+    .filter(row => row.amount && row.type && row.startDate)
+    .map(row => ({
+      id: crypto.randomUUID(),
+      amount: Number(row.amount),
+      type: row.type as IrregularOverpayment['type'],
+      startDate: String(row.startDate),
+    }))
+
+  return { params, insurances, irregularOverpayments }
 }
 
 export const useCsvIO = () => {
-  const exportCsv = useCallback(({ params, insurances, schedule }: ExportData) => {
-    const paramsSection = ['# PARAMETERS', Papa.unparse([params], { header: true })]
-    const insSection = [
-      '# INSURANCES',
-      Papa.unparse(
-        insurances.map(({ id: _id, ...rest }) => rest),
-        { header: true },
-      ),
-    ]
-    const schedSection = ['# SCHEDULE', Papa.unparse(schedule, { header: true })]
+  const exportCsv = useCallback(
+    ({ params, insurances, irregularOverpayments, schedule }: ExportData) => {
+      const paramsSection = ['# PARAMETERS', Papa.unparse([params], { header: true })]
 
-    const content = [...paramsSection, '', ...insSection, '', ...schedSection].join('\n')
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `mortgage-${params.startDate}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [])
+      const insSection = [
+        '# INSURANCES',
+        Papa.unparse(
+          insurances.map(({ id: _id, ...rest }) => rest),
+          { header: true },
+        ),
+      ]
+
+      const irregSection = [
+        '# IRREGULAR_OVERPAYMENTS',
+        Papa.unparse(
+          irregularOverpayments.map(({ id: _id, ...rest }) => rest),
+          { header: true },
+        ),
+      ]
+
+      const schedSection = ['# SCHEDULE', Papa.unparse(schedule, { header: true })]
+
+      const content = [
+        ...paramsSection, '',
+        ...insSection, '',
+        ...irregSection, '',
+        ...schedSection,
+      ].join('\n')
+
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `mortgage-${params.startDate}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    },
+    [],
+  )
 
   const importCsv = useCallback(
     (file: File): Promise<ImportResult> =>
