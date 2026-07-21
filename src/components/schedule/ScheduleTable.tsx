@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { useMortgage } from '../../context/MortgageContext'
 import { getCondensedSchedule } from '../../lib/mortgageCalculator'
 import { ScheduleToggle } from './ScheduleToggle'
+import { glassPaperSx } from '../../theme/glass'
 import type { ScheduleRow } from '../../types'
 
 const fmt = (n: number): string =>
@@ -33,7 +34,7 @@ export const ScheduleTable: React.FC = () => {
   const [view, setView] = useState<'full' | 'condensed'>('condensed')
 
   const rows: ScheduleRow[] = view === 'full' ? schedule : getCondensedSchedule(schedule)
-  const showOverpayment = state.params.overpayment > 0
+  const showOverpayment = schedule.some(r => r.overpayment > 0)
 
   const transitionRows = useMemo(() => {
     const map = new Map<number, TransitionInfo>()
@@ -62,20 +63,40 @@ export const ScheduleTable: React.FC = () => {
 
   if (schedule.length === 0) {
     return (
-      <Paper sx={{ p: 3 }} elevation={2}>
+      <Paper sx={[glassPaperSx, { p: 3 }]} elevation={2}>
         <Typography color="text.secondary">{t('schedule.noData')}</Typography>
       </Paper>
     )
   }
 
   return (
-    <Paper sx={{ p: 2 }} elevation={2}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+    <Paper
+      elevation={2}
+      sx={[
+        glassPaperSx,
+        {
+          p: 2,
+          flex: { lg: 1 },
+          minHeight: { lg: 0 },
+          display: 'flex',
+          flexDirection: 'column',
+        },
+      ]}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 2,
+          flexShrink: 0,
+        }}
+      >
         <Typography variant="h6">{t('schedule.title')}</Typography>
         <ScheduleToggle value={view} onChange={setView} />
       </Box>
 
-      <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
+      <TableContainer sx={{ flex: { lg: 1 }, minHeight: { lg: 0 }, maxHeight: { xs: '70vh', lg: 'none' } }}>
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -101,8 +122,8 @@ export const ScheduleTable: React.FC = () => {
                   sx={
                     transition
                       ? theme => ({
-                          bgcolor: alpha(theme.palette.warning.main, 0.15),
-                          '&:hover': { bgcolor: alpha(theme.palette.warning.main, 0.28) },
+                          bgcolor: alpha(theme.palette.info.main, 0.15),
+                          '&:hover': { bgcolor: alpha(theme.palette.info.main, 0.28) },
                         })
                       : undefined
                   }
@@ -128,7 +149,7 @@ export const ScheduleTable: React.FC = () => {
                             </>
                           }
                         >
-                          <NotificationsOffIcon sx={{ fontSize: 14, color: 'warning.dark' }} />
+                          <NotificationsOffIcon sx={{ fontSize: 14, color: 'info.main' }} />
                         </Tooltip>
                       )}
                     </Box>

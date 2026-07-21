@@ -5,13 +5,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   TextField,
   Typography,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMortgage } from '../../context/MortgageContext'
 import { saveScenario } from '../../services/storageService'
+import { DialogHeader } from '../common/DialogHeader'
 import type { Scenario } from '../../types'
 
 interface Props {
@@ -76,7 +76,12 @@ export const ScenarioSaveDialog: React.FC<Props> = ({ open, onClose, onSaved }) 
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>{t('scenarios.dialogTitle')}</DialogTitle>
+      <DialogHeader
+        title={t('scenarios.saveTitle')}
+        subtitle={t('scenarios.saveSubtitle')}
+        onClose={onClose}
+        closeLabel={t('scenarios.close')}
+      />
       {showOverwriteMode ? (
         <>
           <DialogContent>

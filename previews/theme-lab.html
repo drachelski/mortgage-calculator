@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Theme Lab — Kalkulator Hipoteczny</title>
+<style>
+  /* ---------- base ---------- */
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    transition: background .5s ease, color .5s ease;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- palettes ---------- */
+  /* each palette defines primary, primary2 (gradient end), accent, success, and light/dark surfaces */
+  body[data-palette="indigo"]  { --primary:#4f46e5; --primary2:#7c3aed; --accent:#f59e0b; --success:#22c55e; }
+  body[data-palette="teal"]    { --primary:#0d9488; --primary2:#10b981; --accent:#f59e0b; --success:#10b981; }
+  body[data-palette="midnight"]{ --primary:#1e3a8a; --primary2:#06b6d4; --accent:#a3e635; --success:#22c55e; }
+  body[data-palette="sky"]     { --primary:#0284c7; --primary2:#38bdf8; --accent:#fbbf24; --success:#22c55e; }
+  body[data-palette="fuchsia"] { --primary:#a21caf; --primary2:#7c3aed; --accent:#fb7185; --success:#34d399; }
+  body[data-palette="sunset"]  { --primary:#e11d48; --primary2:#f97316; --accent:#fbbf24; --success:#22c55e; }
+  body[data-palette="forest"]  { --primary:#047857; --primary2:#65a30d; --accent:#f59e0b; --success:#16a34a; }
+
+  /* light / dark surfaces (shared across palettes) */
+  body[data-mode="light"] {
+    --bg:#f4f5fb; --paper:#ffffff; --text:#1a1a2e; --muted:#6b7280; --border:#e5e7eb;
+    --paper-glass: rgba(255,255,255,.72);
+  }
+  body[data-mode="dark"] {
+    --bg:#0d0d17; --paper:#191926; --text:#e8e8f0; --muted:#9ca3af; --border:#2a2a3a;
+    --paper-glass: rgba(25,25,38,.66);
+  }
+
+  /* ---------- animated background layer ---------- */
+  #bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  #bg > * { position: absolute; }
+
+  /* variant: none */
+  body[data-bg="none"] #bg { display: none; }
+
+  /* variant: aurora — soft drifting color clouds */
+  .aurora { display:none; }
+  body[data-bg="aurora"] .aurora { display:block; inset:-20%; }
+  body[data-bg="aurora"] .aurora .blob {
+    border-radius:50%; filter: blur(70px); opacity:.55; mix-blend-mode: normal;
+  }
+  body[data-mode="dark"][data-bg="aurora"] .aurora .blob { opacity:.42; }
+  .aurora .b1 { width:46vmax; height:46vmax; left:-8%; top:-10%; background:var(--primary);
+    animation: drift1 26s ease-in-out infinite alternate; }
+  .aurora .b2 { width:40vmax; height:40vmax; right:-6%; top:8%; background:var(--primary2);
+    animation: drift2 30s ease-in-out infinite alternate; }
+  .aurora .b3 { width:34vmax; height:34vmax; left:22%; bottom:-14%; background:var(--accent);
+    opacity:.4 !important; animation: drift3 34s ease-in-out infinite alternate; }
+  @keyframes drift1 { from{transform:translate(0,0) scale(1)} to{transform:translate(12vmax,8vmax) scale(1.15)} }
+  @keyframes drift2 { from{transform:translate(0,0) scale(1)} to{transform:translate(-10vmax,10vmax) scale(1.1)} }
+  @keyframes drift3 { from{transform:translate(0,0) scale(1)} to{transform:translate(8vmax,-8vmax) scale(1.2)} }
+
+  /* variant: orbs — a few crisp-ish floating circles (very minimal) */
+  .orbs { display:none; }
+  body[data-bg="orbs"] .orbs { display:block; inset:0; }
+  .orbs .o { border-radius:50%; filter: blur(2px); opacity:.14;
+    background: radial-gradient(circle at 30% 30%, var(--primary2), var(--primary)); }
+  body[data-mode="dark"][data-bg="orbs"] .orbs .o { opacity:.20; }
+  .orbs .o1 { width:180px; height:180px; left:8%;  top:18%; animation: float 18s ease-in-out infinite; }
+  .orbs .o2 { width:110px; height:110px; right:14%; top:24%; animation: float 22s ease-in-out infinite reverse; }
+  .orbs .o3 { width:240px; height:240px; right:6%;  bottom:-6%; animation: float 26s ease-in-out infinite; background: radial-gradient(circle at 30% 30%, var(--accent), var(--primary2)); opacity:.10; }
+  .orbs .o4 { width:90px;  height:90px;  left:20%; bottom:12%; animation: float 20s ease-in-out infinite reverse; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-26px)} }
+
+  /* variant: mesh — slowly shifting multi-stop gradient */
+  .mesh { display:none; }
+  body[data-bg="mesh"] .mesh {
+    display:block; inset:0; opacity:.6;
+    background:
+      radial-gradient(60% 60% at 20% 20%, var(--primary) 0%, transparent 60%),
+      radial-gradient(55% 55% at 80% 15%, var(--primary2) 0%, transparent 60%),
+      radial-gradient(60% 60% at 70% 85%, var(--accent) 0%, transparent 55%),
+      radial-gradient(50% 50% at 15% 80%, var(--primary2) 0%, transparent 55%);
+    background-size: 200% 200%;
+    filter: blur(30px);
+    animation: meshmove 28s ease-in-out infinite alternate;
+  }
+  body[data-mode="dark"][data-bg="mesh"] .mesh { opacity:.4; }
+  @keyframes meshmove { from{background-position:0% 0%} to{background-position:100% 100%} }
+
+  /* variant: grid — faint drifting grid, tech/minimal */
+  .grid { display:none; }
+  body[data-bg="grid"] .grid {
+    display:block; inset:-2px;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--primary) 22%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--primary) 22%, transparent) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(circle at 50% 40%, black 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, black 0%, transparent 78%);
+    animation: gridmove 24s linear infinite;
+    opacity:.5;
+  }
+  @keyframes gridmove { from{background-position:0 0} to{background-position:46px 46px} }
+
+  /* variant: dots — soft dot field drifting */
+  .dots { display:none; }
+  body[data-bg="dots"] .dots {
+    display:block; inset:-40px;
+    background-image: radial-gradient(color-mix(in srgb, var(--primary) 40%, transparent) 1.6px, transparent 1.7px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(circle at 50% 45%, black 0%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at 50% 45%, black 0%, transparent 80%);
+    animation: dotsmove 30s linear infinite;
+    opacity:.55;
+  }
+  @keyframes dotsmove { from{background-position:0 0} to{background-position:60px 90px} }
+
+  /* variant: conic — very slow rotating aurora sweep */
+  .conic { display:none; }
+  body[data-bg="conic"] .conic {
+    display:block; width:140vmax; height:140vmax; left:50%; top:50%;
+    background: conic-gradient(from 0deg, var(--primary), var(--primary2), var(--accent), var(--primary2), var(--primary));
+    filter: blur(90px); opacity:.28; transform-origin:center;
+    animation: spin 40s linear infinite;
+  }
+  body[data-mode="dark"][data-bg="conic"] .conic { opacity:.34; }
+  @keyframes spin { from{transform:translate(-50%,-50%) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+  @media (prefers-reduced-motion: reduce) {
+    #bg * { animation: none !important; }
+  }
+
+  /* ---------- layout ---------- */
+  .wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 22px 20px 60px; }
+
+  .controls {
+    background: var(--paper-glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; margin-bottom: 26px;
+    display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: flex-end;
+    box-shadow: 0 8px 30px rgba(0,0,0,.06);
+  }
+  .ctl-group { display: flex; flex-direction: column; gap: 8px; }
+  .ctl-group h4 { margin: 0; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text);
+    padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; line-height: 1;
+    display: inline-flex; align-items: center; gap: 8px; transition: all .18s ease;
+  }
+  .chip:hover { border-color: var(--primary); }
+  .chip[aria-pressed="true"] { border-color: transparent; color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary2)); box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 45%, transparent); }
+  .chip .sw { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .chip[aria-pressed="true"] .sw { box-shadow: inset 0 0 0 1px rgba(255,255,255,.5); }
+
+  .spacer { flex: 1; }
+
+  /* ---------- mock app card ---------- */
+  .grid2 { display: grid; grid-template-columns: 1.05fr 1fr; gap: 22px; }
+  @media (max-width: 820px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--paper-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 18px; padding: 22px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.10);
+  }
+  .card h2 { margin: 0 0 4px; font-size: 20px; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 18px; }
+  .seg button { border: 0; background: transparent; color: var(--text); padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .seg button.on { background: linear-gradient(135deg, var(--primary), var(--primary2)); color: #fff; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .field .box { border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; font-size: 15px; background: color-mix(in srgb, var(--paper) 60%, transparent); }
+  .field .box:focus-within, .field .box.focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+
+  .switchrow { display: flex; align-items: center; gap: 12px; margin: 20px 0 8px; }
+  .switchrow .lbl { font-size: 13px; font-weight: 600; }
+  .switchrow .lbl.dim { color: var(--muted); font-weight: 500; }
+  .toggle { width: 40px; height: 22px; border-radius: 999px; background: color-mix(in srgb, var(--primary) 55%, var(--border)); position: relative; cursor: pointer; transition: background .2s; }
+  .toggle::after { content:""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  .toggle.on { background: linear-gradient(135deg, var(--primary), var(--primary2)); }
+  .toggle.on::after { transform: translateX(18px); }
+  .info { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; padding: 16px; border-radius: 14px; background: color-mix(in srgb, var(--primary) 8%, transparent); }
+  .stat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .stat .v { font-size: 18px; font-weight: 800; margin-top: 2px; }
+  .stat .v.accent { color: var(--accent); }
+  .stat .v.success { color: var(--success); }
+  .stat .v.primary { color: var(--primary); }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .btn { padding: 10px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; }
+  .btn.outline { border: 1.5px solid var(--primary); color: var(--primary); background: transparent; }
+  .btn.solid { border: 0; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary2)); box-shadow: 0 4px 14px color-mix(in srgb, var(--primary) 40%, transparent); }
+  .btn.accent { border: 0; color: #1a1a2e; background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #fff)); }
+
+  .swatchbar { display: flex; gap: 0; border-radius: 12px; overflow: hidden; margin-top: 6px; border: 1px solid var(--border); }
+  .swatchbar div { flex: 1; height: 44px; display: flex; align-items: flex-end; padding: 4px 6px; font-size: 10px; color: rgba(255,255,255,.92); font-weight: 700; }
+
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; white-space: pre; background: color-mix(in srgb, var(--text) 6%, transparent); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; color: var(--text); }
+  .note { font-size: 12px; color: var(--muted); margin-top: 14px; }
+</style>
+</head>
+<body data-palette="indigo" data-mode="light" data-bg="aurora">
+
+  <div id="bg">
+    <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+    <div class="orbs"><div class="o o1"></div><div class="o o2"></div><div class="o o3"></div><div class="o o4"></div></div>
+    <div class="mesh"></div>
+    <div class="grid"></div>
+    <div class="dots"></div>
+    <div class="conic"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="controls">
+      <div class="ctl-group">
+        <h4>Paleta</h4>
+        <div class="chips" id="paletteChips"></div>
+      </div>
+      <div class="ctl-group">
+        <h4>Tło (animowane)</h4>
+        <div class="chips" id="bgChips"></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="ctl-group">
+        <h4>Tryb</h4>
+        <div class="chips">
+          <button class="chip" data-mode="light" aria-pressed="true">☀︎ Jasny</button>
+          <button class="chip" data-mode="dark" aria-pressed="false">☾ Ciemny</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- mock calculator -->
+      <div class="card">
+        <h2>Kalkulator Hipoteczny</h2>
+        <div class="sub">Parametry kredytu</div>
+
+        <div class="seg">
+          <button class="on">Stałe (annuitetowe)</button>
+          <button>Malejące</button>
+        </div>
+
+        <div class="field"><label>Kwota kapitału (PLN)</label><div class="box focus">500 000</div></div>
+        <div class="field"><label>Oprocentowanie roczne (%)</label><div class="box">7,50</div></div>
+
+        <div class="switchrow">
+          <span class="lbl">Stała nadpłata</span>
+          <div class="toggle on" id="mockToggle"></div>
+          <span class="lbl dim">Nadpłata do</span>
+          <span class="info">i</span>
+        </div>
+        <div class="field"><label>Nadpłata do (PLN)</label><div class="box">10 000</div></div>
+
+        <div class="stats">
+          <div class="stat"><div class="k">Miesięczna rata</div><div class="v primary">7 500,00 PLN</div></div>
+          <div class="stat"><div class="k">RRSO</div><div class="v success">7,74%</div></div>
+          <div class="stat"><div class="k">Łączna spłata</div><div class="v">1 842 300 PLN</div></div>
+          <div class="stat"><div class="k">Oszczędności</div><div class="v success">+312 400 PLN</div></div>
+        </div>
+
+        <div class="btns">
+          <div class="btn outline">Zapisz scenariusz</div>
+          <div class="btn solid">Oblicz</div>
+        </div>
+      </div>
+
+      <!-- palette details -->
+      <div class="card">
+        <h2>Podgląd palety</h2>
+        <div class="sub" id="palName">—</div>
+        <div class="swatchbar" id="swbar"></div>
+
+        <div class="btns" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="btn solid">Primary</div>
+          <div class="btn outline">Outline</div>
+          <div class="btn accent">Accent</div>
+        </div>
+
+        <p class="note">Wartości gotowe do <code>theme.ts</code> (light):</p>
+        <div class="code" id="code">—</div>
+        <p class="note">Przełączaj palety i tła powyżej. Gdy wybierzesz, powiedz mi którą kombinację — wtedy wpiszę ją do <code>theme.ts</code> i dodam tło do aplikacji. Ten plik jest tymczasowy (możesz go usunąć).</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const PALETTES = [
+    { id:'indigo',   name:'Indygo → Fiolet + złoto (obecna)', primary:'#4f46e5', primary2:'#7c3aed', accent:'#f59e0b', success:'#22c55e' },
+    { id:'teal',     name:'Teal → Emerald + złoto',           primary:'#0d9488', primary2:'#10b981', accent:'#f59e0b', success:'#10b981' },
+    { id:'midnight', name:'Granat → Cyan + lime',             primary:'#1e3a8a', primary2:'#06b6d4', accent:'#a3e635', success:'#22c55e' },
+    { id:'sky',      name:'Sky → Błękit + amber',             primary:'#0284c7', primary2:'#38bdf8', accent:'#fbbf24', success:'#22c55e' },
+    { id:'fuchsia',  name:'Fuksja → Fiolet + koral',          primary:'#a21caf', primary2:'#7c3aed', accent:'#fb7185', success:'#34d399' },
+    { id:'sunset',   name:'Zachód: Róż → Pomarańcz + amber',  primary:'#e11d48', primary2:'#f97316', accent:'#fbbf24', success:'#22c55e' },
+    { id:'forest',   name:'Las: Emerald → Limonka + złoto',   primary:'#047857', primary2:'#65a30d', accent:'#f59e0b', success:'#16a34a' },
+  ];
+  const BGS = [
+    { id:'aurora', name:'Aurora' },
+    { id:'mesh',   name:'Mesh' },
+    { id:'orbs',   name:'Orbity' },
+    { id:'conic',  name:'Wir (conic)' },
+    { id:'grid',   name:'Siatka' },
+    { id:'dots',   name:'Kropki' },
+    { id:'none',   name:'Brak' },
+  ];
+
+  const body = document.body;
+  const palChips = document.getElementById('paletteChips');
+  const bgChips  = document.getElementById('bgChips');
+
+  PALETTES.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.dataset.palette = p.id;
+    b.setAttribute('aria-pressed', p.id === body.dataset.palette);
+    b.innerHTML = `<span class="sw" style="background:linear-gradient(135deg,${p.primary},${p.primary2})"></span>${p.name.split(' ')[0]}`;
+    b.title = p.name;
+    b.onclick = () => setPalette(p.id);
+    palChips.appendChild(b);
+  });
+  BGS.forEach(g => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.dataset.bg = g.id;
+    b.textContent = g.name;
+    b.setAttribute('aria-pressed', g.id === body.dataset.bg);
+    b.onclick = () => setBg(g.id);
+    bgChips.appendChild(b);
+  });
+
+  function press(container, attr, val) {
+    container.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset[attr] === val));
+  }
+  function setPalette(id) {
+    body.dataset.palette = id; press(palChips, 'palette', id); renderDetails(id);
+  }
+  function setBg(id) { body.dataset.bg = id; press(bgChips, 'bg', id); }
+
+  document.querySelectorAll('.chip[data-mode]').forEach(c => {
+    c.onclick = () => {
+      body.dataset.mode = c.dataset.mode;
+      document.querySelectorAll('.chip[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === c));
+      renderDetails(body.dataset.palette);
+    };
+  });
+  document.getElementById('mockToggle').onclick = e => e.currentTarget.classList.toggle('on');
+
+  function renderDetails(id) {
+    const p = PALETTES.find(x => x.id === id);
+    document.getElementById('palName').textContent = p.name;
+    const sw = document.getElementById('swbar');
+    sw.innerHTML = '';
+    [['primary',p.primary],['primary2',p.primary2],['accent',p.accent],['success',p.success]].forEach(([k,v]) => {
+      const d = document.createElement('div'); d.style.background = v; d.textContent = v; sw.appendChild(d);
+    });
+    document.getElementById('code').textContent =
+`primary:   { main: '${p.primary}' },  // indigo/base
+secondary: { main: '${p.primary2}' },  // gradient end
+warning:   { main: '${p.accent}' },  // accent
+success:   { main: '${p.success}' },`;
+  }
+
+  renderDetails(body.dataset.palette);
+</script>
+</body>
+</html>

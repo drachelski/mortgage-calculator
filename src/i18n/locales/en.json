@@ -28,9 +28,12 @@
     "addInsurance": "Add Insurance",
     "saveScenario": "Save Scenario",
     "loadScenarios": "Load Scenario",
+    "saveParams": "Save parameters",
+    "loadParams": "Load parameters",
     "exportCsv": "Export CSV",
     "importCsv": "Import CSV",
     "calculate": "Calculate",
+    "summary": "Loan summary",
     "monthlyInstallment": "Monthly installment",
     "loanEndDate": "Loan end date",
     "rrso": "APR",
@@ -41,12 +44,26 @@
     "totalRepaymentBase": "Total without overpayments",
     "savings": "Savings from overpayments"
   },
+  "common": {
+    "add": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit"
+  },
   "insurance": {
     "name": "Insurance Name",
     "amount": "Amount (PLN/mo.)",
     "temporary": "Temporary Insurance",
     "endDate": "End Date",
-    "remove": "Remove"
+    "remove": "Remove",
+    "edit": "Edit insurance",
+    "addTitle": "Add insurance",
+    "editTitle": "Edit insurance",
+    "subtitle": "Insurance added to the monthly installment. It can be permanent or temporary (charged until a given date).",
+    "unnamed": "Insurance",
+    "monthly": "PLN/mo.",
+    "until": "until"
   },
   "irregularOverpayment": {
     "amount": "Amount (PLN)",
@@ -56,7 +73,11 @@
     "typeAnnual": "Annual",
     "date": "Payment date",
     "startDate": "First from",
-    "remove": "Remove"
+    "remove": "Remove",
+    "edit": "Edit irregular overpayment",
+    "addTitle": "Add irregular overpayment",
+    "editTitle": "Edit irregular overpayment",
+    "subtitle": "A one-time or recurring overpayment at a specific point in time, independent of the fixed monthly overpayment."
   },
   "schedule": {
     "title": "Payment Schedule",
@@ -76,16 +97,21 @@
   "scenarios": {
     "title": "Scenarios",
     "dialogTitle": "Save Scenario",
-    "nameLabel": "Scenario Name",
+    "saveTitle": "Save loan parameters",
+    "saveSubtitle": "Save the current loan parameters as a named set so you can return to them later.",
+    "loadTitle": "Load loan parameters",
+    "loadSubtitle": "Pick a previously saved set of loan parameters to load.",
+    "nameLabel": "Parameter set name",
     "save": "Save",
     "cancel": "Cancel",
+    "close": "Close",
     "load": "Load",
     "delete": "Delete",
-    "empty": "No saved scenarios",
+    "empty": "No saved parameters",
     "savedAt": "Saved",
     "overwrite": "Overwrite",
     "saveAsNew": "Save as new",
-    "currentScenario": "Scenario"
+    "currentScenario": "Parameter set"
   },
   "snackbar": {
     "scenarioSaved": "Scenario saved",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
@@ -13,8 +13,12 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<'light' | 'dark'>(
     () => (localStorage.getItem('theme') as 'light' | 'dark') ?? 'light',
   )
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dateLocale = i18n.language === 'pl' ? plLocale : enUS
+
+  useEffect(() => {
+    document.title = t('app.title')
+  }, [t, i18n.language])
 
   const toggleTheme = () => {
     const next: 'light' | 'dark' = mode === 'light' ? 'dark' : 'light'
