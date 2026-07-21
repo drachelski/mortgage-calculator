@@ -71,4 +71,32 @@ describe('parseCsvContent', () => {
   it('throws on malformed content', () => {
     expect(() => parseCsvContent('garbage')).toThrow()
   })
+
+  it('round-trips overpayment mode and target', () => {
+    const content = [
+      '# PARAMETERS',
+      'principal,annualRate,termMonths,startDate,overpayment,overpaymentMode,overpaymentTarget,loanType,shortenTerm,shortenFrequency',
+      '500000,7.5,360,2026-01,0,target,10000,annuity,false,12',
+      '',
+      '# INSURANCES',
+      'name,amount,isTemporary,endDate',
+      '',
+      '# IRREGULAR_OVERPAYMENTS',
+      'amount,type,startDate',
+    ].join('\n')
+    const result = parseCsvContent(content)
+    expect(result.params.overpaymentMode).toBe('target')
+    expect(result.params.overpaymentTarget).toBe(10000)
+  })
+
+  it('defaults old CSVs without the new columns to fixed mode', () => {
+    const content = [
+      '# PARAMETERS',
+      'principal,annualRate,termMonths,startDate,overpayment,loanType,shortenTerm,shortenFrequency',
+      '500000,7.5,360,2026-01,1000,annuity,false,12',
+    ].join('\n')
+    const result = parseCsvContent(content)
+    expect(result.params.overpaymentMode).toBeUndefined()
+    expect(result.params.overpayment).toBe(1000)
+  })
 })

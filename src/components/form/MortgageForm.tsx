@@ -49,7 +49,11 @@ export const MortgageForm: React.FC = () => {
     [schedule],
   )
   const baseSchedule = useMemo(
-    () => calculateSchedule({ ...params, overpayment: 0, shortenTerm: false }, insurances),
+    () =>
+      calculateSchedule(
+        { ...params, overpayment: 0, overpaymentMode: 'fixed', shortenTerm: false },
+        insurances,
+      ),
     [params, insurances],
   )
   const totalBase = useMemo(
@@ -139,6 +143,12 @@ export const MortgageForm: React.FC = () => {
   const shortenFreq = params.shortenFrequency ?? 12
   const isCustomFrequency = !PRESET_FREQUENCIES.includes(shortenFreq)
 
+  const overpaymentMode = params.overpaymentMode ?? 'fixed'
+  const hasOverpayment =
+    overpaymentMode === 'target'
+      ? (params.overpaymentTarget ?? 0) > 0
+      : params.overpayment > 0
+
   return (
     <Paper sx={{ p: 2 }} elevation={2}>
       <Typography variant="h6" sx={{ mb: 2.5 }}>
@@ -199,17 +209,53 @@ export const MortgageForm: React.FC = () => {
           slotProps={{ textField: { fullWidth: true } }}
         />
 
-        {/* Overpayment + shorten options */}
-        <TextField
-          label={t('form.overpayment')}
-          type="number"
-          value={params.overpayment}
-          onChange={e => setParam('overpayment', Number(e.target.value))}
-          slotProps={{ htmlInput: { min: 0, step: 100 } }}
-          fullWidth
-        />
+        {/* Overpayment mode switch */}
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{ color: overpaymentMode === 'fixed' ? 'text.primary' : 'text.secondary' }}
+            >
+              {t('form.overpaymentModeFixed')}
+            </Typography>
+            <Switch
+              checked={overpaymentMode === 'target'}
+              onChange={e => setParam('overpaymentMode', e.target.checked ? 'target' : 'fixed')}
+              size="small"
+            />
+            <Typography
+              variant="body2"
+              sx={{ color: overpaymentMode === 'target' ? 'text.primary' : 'text.secondary' }}
+            >
+              {t('form.overpaymentModeTarget')}
+            </Typography>
+            <Tooltip arrow placement="top" title={t('form.overpaymentModeInfo')}>
+              <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary', cursor: 'help' }} />
+            </Tooltip>
+          </Box>
 
-        {params.overpayment > 0 && (
+          {overpaymentMode === 'fixed' ? (
+            <TextField
+              label={t('form.overpayment')}
+              type="number"
+              value={params.overpayment}
+              onChange={e => setParam('overpayment', Number(e.target.value))}
+              slotProps={{ htmlInput: { min: 0, step: 100 } }}
+              fullWidth
+            />
+          ) : (
+            <TextField
+              label={t('form.overpaymentTarget')}
+              type="number"
+              value={params.overpaymentTarget ?? 0}
+              onChange={e => setParam('overpaymentTarget', Number(e.target.value))}
+              slotProps={{ htmlInput: { min: 0, step: 100 } }}
+              fullWidth
+            />
+          )}
+        </Box>
+
+        {hasOverpayment && (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, pl: 1 }}>
             <FormControlLabel
               control={
