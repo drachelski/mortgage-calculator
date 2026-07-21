@@ -189,3 +189,65 @@ describe('calculateRRSO', () => {
     expect(withIns).toBeGreaterThan(noIns)
   })
 })
+
+describe('overpayment target mode', () => {
+  // No insurance, so the full installment equals principalPart + interest.
+  const targetParams: MortgageParams = {
+    principal: 500000,
+    annualRate: 7.5,
+    termMonths: 360,
+    startDate: '2026-01',
+    overpayment: 0,
+    overpaymentMode: 'target',
+    overpaymentTarget: 10000,
+    loanType: 'annuity',
+    shortenTerm: false,
+  }
+
+  it('tops the installment up to the target in month 1', () => {
+    const rows = calculateSchedule(targetParams, [])
+    const first = rows[0]
+    const installment = first.principalPart + first.interestPart
+    expect(first.overpayment).toBeCloseTo(10000 - installment, 2)
+    // full monthly payment reaches the target
+    expect(first.principalPart + first.interestPart + first.overpayment).toBeCloseTo(10000, 2)
+  })
+
+  it('increases the overpayment as the base installment shrinks', () => {
+    const rows = calculateSchedule(targetParams, [])
+    // installment (principal+interest) decreases over time in reduce-installment mode,
+    // so overpayment must grow to keep the total at the target
+    expect(rows[12].overpayment).toBeGreaterThan(rows[0].overpayment)
+  })
+
+  it('includes insurance in the target basis', () => {
+    const rows = calculateSchedule(targetParams, [
+      { id: 'a', name: 'x', amount: 500, isTemporary: false },
+    ])
+    const first = rows[0]
+    const total = first.principalPart + first.interestPart + first.insuranceTotal + first.overpayment
+    expect(total).toBeCloseTo(10000, 2)
+  })
+
+  it('applies no overpayment when the target is below the installment', () => {
+    const rows = calculateSchedule({ ...targetParams, overpaymentTarget: 100 }, [])
+    expect(rows[0].overpayment).toBe(0)
+  })
+
+  it('does not overpay beyond the remaining principal near payoff', () => {
+    const rows = calculateSchedule({ ...targetParams, overpaymentTarget: 1_000_000 }, [])
+    const last = rows[rows.length - 1]
+    expect(last.remainingPrincipal).toBeCloseTo(0, 2)
+    // schedule ends well before the full term because of the large overpayment
+    expect(rows.length).toBeLessThan(360)
+  })
+
+  it('leaves RRSO unaffected by target-mode overpayment', () => {
+    const withTarget = calculateRRSO(targetParams, [])
+    const noOverpay = calculateRRSO(
+      { ...targetParams, overpaymentMode: 'fixed', overpaymentTarget: 0, overpayment: 0 },
+      [],
+    )
+    expect(withTarget).toBeCloseTo(noOverpay, 6)
+  })
+})

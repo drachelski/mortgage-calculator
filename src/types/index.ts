@@ -6,6 +6,8 @@ export interface MortgageParams {
   termMonths: number
   startDate: string // YYYY-MM
   overpayment: number
+  overpaymentMode?: 'fixed' | 'target' // default: 'fixed'
+  overpaymentTarget?: number // target total installment for 'target' mode
   loanType?: LoanType       // default: 'annuity'
   shortenTerm?: boolean     // default: false (reduce installment mode)
   shortenFrequency?: number // default: 12; only used when shortenTerm=true

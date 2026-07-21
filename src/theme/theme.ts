@@ -6,10 +6,16 @@ export const getTheme = (mode: 'light' | 'dark'): Theme =>
     palette: {
       mode,
       primary: {
-        main: mode === 'light' ? '#546e7a' : '#78909c',
+        main: mode === 'light' ? '#4f46e5' : '#818cf8', // indigo
+      },
+      secondary: {
+        main: mode === 'light' ? '#7c3aed' : '#a78bfa', // violet
+      },
+      warning: {
+        main: '#f59e0b', // gold (coin accent)
       },
       success: {
-        main: mode === 'light' ? '#66bb6a' : '#81c784',
+        main: mode === 'light' ? '#22c55e' : '#4ade80', // green (savings)
       },
       background: {
         default: mode === 'light' ? '#f5f5f5' : '#121212',

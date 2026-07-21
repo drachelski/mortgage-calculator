@@ -64,6 +64,10 @@ export const calculateSchedule = (
   const loanType = params.loanType ?? 'annuity'
   const shortenTerm = params.shortenTerm ?? false
   const shortenFrequency = Math.max(1, params.shortenFrequency ?? 12)
+  const overpaymentMode = params.overpaymentMode ?? 'fixed'
+  const overpaymentTarget = params.overpaymentTarget ?? 0
+  const hasRegularOverpayment =
+    overpaymentMode === 'target' ? overpaymentTarget > 0 : overpayment > 0
 
   const r = annualRate / 12 / 100
 
@@ -96,7 +100,11 @@ export const calculateSchedule = (
 
     const afterPrincipal = Math.max(0, remaining - principalPart)
     const irregularOvp = getIrregularOverpayment(irregularOverpayments, date)
-    const totalOvp = Math.min(overpayment + irregularOvp, afterPrincipal)
+    const regularOvp =
+      overpaymentMode === 'target'
+        ? Math.max(0, overpaymentTarget - (principalPart + interest + insuranceTotal))
+        : overpayment
+    const totalOvp = Math.min(regularOvp + irregularOvp, afterPrincipal)
     const newRemaining = Math.max(0, afterPrincipal - totalOvp)
 
     rows.push({
@@ -112,7 +120,7 @@ export const calculateSchedule = (
 
     remaining = newRemaining
 
-    if ((overpayment > 0 || irregularOverpayments.length > 0) && remaining > 0) {
+    if ((hasRegularOverpayment || irregularOverpayments.length > 0) && remaining > 0) {
       if (shortenTerm && month % shortenFrequency === 0) {
         // Shorten event: recalculate term, then reset payment to baseRef.
         // At frequency=1 this keeps payment constant; at frequency=N it creates a sawtooth.
@@ -156,7 +164,10 @@ export const getCondensedSchedule = (rows: ScheduleRow[]): ScheduleRow[] => {
 
 export const calculateRRSO = (params: MortgageParams, insurances: Insurance[]): number => {
   if (params.principal <= 0 || params.termMonths <= 0) return 0
-  const schedule = calculateSchedule({ ...params, overpayment: 0, shortenTerm: false }, insurances)
+  const schedule = calculateSchedule(
+    { ...params, overpayment: 0, overpaymentMode: 'fixed', shortenTerm: false },
+    insurances,
+  )
   if (schedule.length === 0) return 0
   const P = params.principal
   const cashFlows = schedule.map(row => row.principalPart + row.interestPart + row.insuranceTotal)
