@@ -1,44 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
   <defs>
     <linearGradient id="tile" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#4f46e5"/>
-      <stop offset="1" stop-color="#7c3aed"/>
+      <stop offset="0" stop-color="#0d9488"/>
+      <stop offset="1" stop-color="#10b981"/>
     </linearGradient>
-    <linearGradient id="coin" x1="24" y1="34" x2="40" y2="50" gradientUnits="userSpaceOnUse">
+    <linearGradient id="coin" x1="18" y1="15" x2="46" y2="49" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#fbbf24"/>
       <stop offset="1" stop-color="#f59e0b"/>
     </linearGradient>
-    <filter id="soft" x="-25%" y="-25%" width="150%" height="150%">
-      <feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#1e1b4b" flood-opacity="0.35"/>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.6" stdDeviation="1.8" flood-color="#064e3b" flood-opacity="0.4"/>
     </filter>
   </defs>
 
   <!-- app tile -->
   <rect width="64" height="64" rx="15" fill="url(#tile)"/>
 
-  <!-- time: progress arc sweeping the top-right, evoking a clock / amortization over time -->
-  <path d="M39 11.5 A21 21 0 0 1 52.5 25" stroke="#ffffff" stroke-opacity="0.32"
-        stroke-width="2.6" stroke-linecap="round" fill="none"/>
-
-  <!-- house (money + time live inside it) -->
+  <!-- coin = money -->
   <g filter="url(#soft)">
-    <path d="M32 10 L57 32.5 H7 Z" fill="#ffffff"/>
-    <rect x="17" y="30" width="30" height="24.5" rx="3.5" fill="#ffffff"/>
+    <circle cx="32" cy="32" r="19" fill="url(#coin)" stroke="#d97706" stroke-width="1.2"/>
+  </g>
+  <!-- subtle top highlight -->
+  <path d="M20 25 A15 15 0 0 1 44 22" stroke="#ffffff" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+  <!-- clock ticks = time -->
+  <g fill="#0f766e">
+    <circle cx="32" cy="18.5" r="1.3"/>
+    <circle cx="45.5" cy="32" r="1.3"/>
+    <circle cx="32" cy="45.5" r="1.3"/>
+    <circle cx="18.5" cy="32" r="1.3"/>
   </g>
 
-  <!-- clock ticks around the coin -->
-  <g fill="#4338ca" opacity="0.55">
-    <circle cx="32" cy="31.6" r="0.9"/>
-    <circle cx="42.4" cy="42" r="0.9"/>
-    <circle cx="32" cy="52.4" r="0.9"/>
-    <circle cx="21.6" cy="42" r="0.9"/>
+  <!-- clock hands merge money + time -->
+  <g stroke="#0f766e" stroke-linecap="round" fill="none">
+    <path d="M32 32 V22.5" stroke-width="2.6"/>
+    <path d="M32 32 L40 35" stroke-width="2.6"/>
   </g>
-
-  <!-- coin doubling as a clock face: money + time -->
-  <circle cx="32" cy="42" r="9" fill="url(#coin)" stroke="#d97706" stroke-width="1"/>
-  <g stroke="#4338ca" stroke-linecap="round" fill="none">
-    <path d="M32 42 V35.6" stroke-width="2"/>
-    <path d="M32 42 L36.6 43.6" stroke-width="2"/>
-  </g>
-  <circle cx="32" cy="42" r="1.5" fill="#4338ca"/>
+  <circle cx="32" cy="32" r="2.2" fill="#0f766e"/>
 </svg>

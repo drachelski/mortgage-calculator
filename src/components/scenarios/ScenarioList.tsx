@@ -3,8 +3,8 @@ import {
   Button,
   CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
-  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -15,6 +15,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useTranslation } from 'react-i18next'
 import { useMortgage } from '../../context/MortgageContext'
 import { deleteScenario, getScenarios } from '../../services/storageService'
+import { DialogHeader } from '../common/DialogHeader'
 import type { Scenario } from '../../types'
 
 interface Props {
@@ -62,7 +63,12 @@ export const ScenarioList: React.FC<Props> = ({ open, onClose, onLoaded, onDelet
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{t('scenarios.title')}</DialogTitle>
+      <DialogHeader
+        title={t('scenarios.loadTitle')}
+        subtitle={t('scenarios.loadSubtitle')}
+        onClose={onClose}
+        closeLabel={t('scenarios.close')}
+      />
       <DialogContent>
         {loading && <CircularProgress />}
         {!loading && scenarios.length === 0 && (
@@ -94,6 +100,9 @@ export const ScenarioList: React.FC<Props> = ({ open, onClose, onLoaded, onDelet
           ))}
         </List>
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>{t('scenarios.close')}</Button>
+      </DialogActions>
     </Dialog>
   )
 }

@@ -28,9 +28,12 @@
     "addInsurance": "Dodaj ubezpieczenie",
     "saveScenario": "Zapisz scenariusz",
     "loadScenarios": "Wczytaj scenariusz",
+    "saveParams": "Zapisz parametry",
+    "loadParams": "Wczytaj parametry",
     "exportCsv": "Eksportuj CSV",
     "importCsv": "Importuj CSV",
     "calculate": "Oblicz",
+    "summary": "Podsumowanie kredytu",
     "monthlyInstallment": "Miesięczna rata",
     "loanEndDate": "Data zakończenia kredytu",
     "rrso": "RRSO",
@@ -41,12 +44,26 @@
     "totalRepaymentBase": "Łączna kwota bez nadpłat",
     "savings": "Oszczędności dzięki nadpłatom"
   },
+  "common": {
+    "add": "Dodaj",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "close": "Zamknij",
+    "edit": "Edytuj"
+  },
   "insurance": {
     "name": "Nazwa ubezpieczenia",
     "amount": "Kwota (PLN/mies.)",
     "temporary": "Ubezpieczenie czasowe",
     "endDate": "Data zakończenia",
-    "remove": "Usuń"
+    "remove": "Usuń",
+    "edit": "Edytuj ubezpieczenie",
+    "addTitle": "Dodaj ubezpieczenie",
+    "editTitle": "Edytuj ubezpieczenie",
+    "subtitle": "Ubezpieczenie doliczane do miesięcznej raty. Może być stałe lub czasowe (naliczane do wskazanej daty).",
+    "unnamed": "Ubezpieczenie",
+    "monthly": "PLN/mies.",
+    "until": "do"
   },
   "irregularOverpayment": {
     "amount": "Kwota (PLN)",
@@ -56,7 +73,11 @@
     "typeAnnual": "Raz do roku",
     "date": "Data nadpłaty",
     "startDate": "Pierwsza od",
-    "remove": "Usuń"
+    "remove": "Usuń",
+    "edit": "Edytuj nieregularną nadpłatę",
+    "addTitle": "Dodaj nieregularną nadpłatę",
+    "editTitle": "Edytuj nieregularną nadpłatę",
+    "subtitle": "Jednorazowa lub cykliczna nadpłata w konkretnym momencie, niezależna od stałej nadpłaty miesięcznej."
   },
   "schedule": {
     "title": "Harmonogram spłat",
@@ -76,16 +97,21 @@
   "scenarios": {
     "title": "Scenariusze",
     "dialogTitle": "Zapisz scenariusz",
-    "nameLabel": "Nazwa scenariusza",
+    "saveTitle": "Zapisz parametry kredytu",
+    "saveSubtitle": "Zapisz bieżące parametry kredytu jako nazwany zestaw, aby wrócić do nich później.",
+    "loadTitle": "Wczytaj parametry kredytu",
+    "loadSubtitle": "Wybierz wcześniej zapisany zestaw parametrów kredytu, aby go wczytać.",
+    "nameLabel": "Nazwa parametrów",
     "save": "Zapisz",
     "cancel": "Anuluj",
+    "close": "Zamknij",
     "load": "Wczytaj",
     "delete": "Usuń",
-    "empty": "Brak zapisanych scenariuszy",
+    "empty": "Brak zapisanych parametrów",
     "savedAt": "Zapisano",
     "overwrite": "Nadpisz",
     "saveAsNew": "Zapisz jako nowy",
-    "currentScenario": "Scenariusz"
+    "currentScenario": "Zestaw parametrów"
   },
   "snackbar": {
     "scenarioSaved": "Scenariusz zapisany",
